@@ -4,6 +4,7 @@ import com.swpu.apply_server.domain.Apply;
 import com.swpu.apply_server.vo.ApplyVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -67,4 +68,16 @@ public interface ApplyAuditMapper {
      */
     @Select("select count(1) from apply where apply_name = #{applyName} and apply_system = #{applySystem}")
     int countFindApplyByNameAndSystem(String applyName,String applySystem);
+    /**
+     * 应用审核通过
+     * @param id
+     */
+    @Update("update apply set audit_state = '1' where id = #{id}")
+    void auditPass(@Param("id") String id);
+    /**
+     * 应用审核未通过
+     * @param id
+     */
+    @Update("update apply set audit_state = '-1' where id = #{id}")
+    void auditUnPass(@Param("id") String id);
 }

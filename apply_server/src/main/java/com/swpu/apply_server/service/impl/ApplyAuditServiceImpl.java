@@ -99,4 +99,25 @@ public class ApplyAuditServiceImpl implements ApplyAuditService {
     public int countFindApplyByNameAndSystem(String applyName, String applySystem) {
         return applyAuditMapper.countFindApplyByNameAndSystem(applyName,applySystem);
     }
+
+    /**
+     * 应用审核通过
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public void auditPass(String id) {
+        applyAuditMapper.auditPass(id);
+    }
+
+    /**
+     * 应用审核未通过
+     *
+     * @param id
+     */
+    @Override
+    public void auditUnPass(String id) {
+        applyAuditMapper.auditUnPass(id);
+    }
 }

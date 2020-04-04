@@ -58,4 +58,17 @@ public interface ApplyAuditService {
      * @return
      */
     int countFindApplyByNameAndSystem(String applyName,String applySystem);
+
+    /**
+     * 应用审核通过
+     * @param id
+     * @return
+     */
+    void auditPass(String id);
+
+    /**
+     * 应用审核未通过
+     * @param id
+     */
+    void auditUnPass(String id);
 }
