@@ -19,6 +19,7 @@ public class ApplyAuditServiceImpl implements ApplyAuditService {
      */
     @Override
     public List<Apply> findAllApply(ApplyVo applyVo) {
+
         return applyAuditMapper.findAllApply(applyVo);
     }
 
