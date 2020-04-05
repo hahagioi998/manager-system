@@ -8,8 +8,7 @@ public class Apply implements Serializable {
     private String icon;//图标
     private String applySystem;//应用系统
     private String description;//描述
-    private String auditState;//审核状态：1：审核通过；0：审核中；-1：审核未通过
-    private String releaseState;//发布状态：1：发布；-1：未发布
+    private String state;//审核状态：1：审核通过；0：审核中；-1：审核未通过;2:已经发布；-2:下架；
     private String createTime;
     private String updateTime;
 
@@ -19,6 +18,14 @@ public class Apply implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getApplyName() {
@@ -52,21 +59,6 @@ public class Apply implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    public String getAuditState() {
-        return auditState;
-    }
-
-    public void setAuditState(String auditState) {
-        this.auditState = auditState;
-    }
-
-    public String getReleaseState() {
-        return releaseState;
-    }
-
-    public void setReleaseState(String releaseState) {
-        this.releaseState = releaseState;
-    }
 
     public String getCreateTime() {
         return createTime;
@@ -92,8 +84,7 @@ public class Apply implements Serializable {
                 ", icon='" + icon + '\'' +
                 ", applySystem='" + applySystem + '\'' +
                 ", description='" + description + '\'' +
-                ", auditState='" + auditState + '\'' +
-                ", releaseState='" + releaseState + '\'' +
+                ", state='" + state + '\'' +
                 ", createTime='" + createTime + '\'' +
                 ", updateTime='" + updateTime + '\'' +
                 '}';

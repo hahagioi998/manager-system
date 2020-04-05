@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>应用审核</title>
+    <title>我的应用</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
@@ -25,9 +25,13 @@
     <form action="" method="post" id="searchFrm" lay-filter="searchFrm" class="layui-form layui-form-pane">
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">应用名称</label>
+                <label class="layui-form-label">状态</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="applyName" autocomplete="off" class="layui-input">
+                    <select name="state" lay-verify="">
+                        <option value="1">审核已通过</option>
+                        <option value="0">审核中</option>
+                        <option value="-1">审核未通过</option>
+                    </select>
                 </div>
             </div>
             <div class="layui-inline">
@@ -59,11 +63,11 @@
     <div id="applyToolBar" style="display: none;">
     </div>
 	<div id="operateBar" style="display: none;">
-		<button type="button" lay-event="passAudit" class="layui-btn layui-btn-sm">
-			<span class="layui-icon layui-icon-edit">通过</span>
+		<button type="button" lay-event="release" class="layui-btn layui-btn-sm">
+			<span class="layui-icon layui-icon-edit">发布</span>
 		</button>
-		<button type="button" lay-event="unPassAudit" class="layui-btn layui-btn-sm layui-btn-danger">
-			<span class="layui-icon layui-icon-delete">未通过</span>
+		<button type="button" lay-event="soldOut" class="layui-btn layui-btn-sm layui-btn-danger">
+			<span class="layui-icon layui-icon-delete">下架</span>
 		</button>
 
 	</div>
@@ -119,19 +123,19 @@
         table.on("tool(applyTable)", function (obj) {
 			var data = obj.data; //获得当前行数据
 			switch(obj.event){
-				case 'passAudit':
-					applyAuditPass(data);
+				case 'release':
+					applyRelease(data);
 					break;
-                case 'unPassAudit':
-                    applyAuditUnPass(data);
+                case 'soldOut':
+                    applySoldOut(data);
                     break;
 			};
         });
 
         //应用审核通过
-        function applyAuditPass(data) {
-            layer.confirm('你确定【'+data.applyName+'】通过审核',{icon: 3,title: '提示'},function (index) {
-                $.post("http://localhost:9000/apply_server/apply/audit/auditPass",{id:data.id},function (res) {
+        function applyRelease(data) {
+            layer.confirm('你确定发布【'+data.applyName+'】吗？',{icon: 3,title: '提示'},function (index) {
+                $.post("http://localhost:9000/apply_server/apply/release/release",{id:data.id},function (res) {
                     if (res.code == 0){
                         tableIns.reload();
                     }
@@ -141,9 +145,9 @@
             })
         }
         //应用审核未通过
-        function applyAuditUnPass(data) {
-            layer.confirm('你确定【'+data.applyName+'】未通过审核',{icon: 3,title: '提示'},function (index) {
-                $.post("http://localhost:9000/apply_server/apply/audit/auditUnPass",{id:data.id},function (res) {
+        function applySoldOut(data) {
+            layer.confirm('你确定下架【'+data.applyName+'】吗？',{icon: 3,title: '提示'},function (index) {
+                $.post("http://localhost:9000/apply_server/apply/release/soldOut",{id:data.id},function (res) {
                     if (res.code == 0){
                         tableIns.reload();
                     }

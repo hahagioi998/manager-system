@@ -14,7 +14,7 @@ public interface ApplyAuditMapper {
      * 查询所有应用信息
      * @return
      */
-    @Select("SELECT id,apply_name,icon,apply_system,description,audit_state,release_state,create_time,update_time FROM apply limit #{page},#{limit}")
+    @Select("SELECT id,apply_name,icon,apply_system,description,state,create_time,update_time FROM apply limit #{page},#{limit}")
     List<Apply> findAllApply(ApplyVo applyVo);
 
     /**
@@ -28,7 +28,7 @@ public interface ApplyAuditMapper {
      * 通过应用名称查询
      * @return
      */
-    @Select("select id,apply_name,icon,apply_system,description,audit_state,release_state,create_time,update_time from apply where apply_name = #{applyName} limit #{page},#{limit}")
+    @Select("select id,apply_name,icon,apply_system,description,state,create_time,update_time from apply where apply_name = #{applyName} limit #{page},#{limit}")
     List<Apply> findByApplyName(String applyName, @Param("page") Integer page, @Param("limit") Integer limit);
 
     /**
@@ -43,7 +43,7 @@ public interface ApplyAuditMapper {
      * @param applySystem
      * @return
      */
-    @Select("select id,apply_name,icon,apply_system,description,audit_state,release_state,create_time,update_time from apply where apply_system = #{applySystem} limit #{page},#{limit}")
+    @Select("select id,apply_name,icon,apply_system,description,state,create_time,update_time from apply where apply_system = #{applySystem} limit #{page},#{limit}")
     List<Apply> findByApplySystem(String applySystem,@Param("page") Integer page,@Param("limit") Integer limit);
     /**
      * 通过应用系统查询应用条数
@@ -58,7 +58,7 @@ public interface ApplyAuditMapper {
      * @param applySystem
      * @return
      */
-    @Select("select id,apply_name,icon,apply_system,description,audit_state,release_state,create_time,update_time from apply where apply_name = #{applyName} and apply_system = #{applySystem} limit #{page},#{limit}")
+    @Select("select id,apply_name,icon,apply_system,description,state,create_time,update_time from apply where apply_name = #{applyName} and apply_system = #{applySystem} limit #{page},#{limit}")
     List<Apply> findByAppNameAndBySystem(String applyName,String applySystem,@Param("page") Integer page,@Param("limit") Integer limit);
 
     /**
@@ -72,12 +72,12 @@ public interface ApplyAuditMapper {
      * 应用审核通过
      * @param id
      */
-    @Update("update apply set audit_state = '1' where id = #{id}")
+    @Update("update apply set state = '1' where id = #{id}")
     void auditPass(@Param("id") String id);
     /**
      * 应用审核未通过
      * @param id
      */
-    @Update("update apply set audit_state = '-1' where id = #{id}")
+    @Update("update apply set state = '-1' where id = #{id}")
     void auditUnPass(@Param("id") String id);
 }
