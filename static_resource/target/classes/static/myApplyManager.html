@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>我的应用</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/css/public.css" media="all"/>
+    <link rel="stylesheet" href="/layui_ext/dtree/dtree.css" media="all"/>
+    <link rel="stylesheet" href="/layui_ext/dtree/font/dtreefont.css" media="all"/>
+</head>
+<body class="childrenBody">
+<!-- 查询条件开始 -->
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 5px;">
+    <legend>查询条件</legend>
+</fieldset>
+<blockquote class="layui-elem-quote">
+    <form action="" method="post" id="searchFrm" lay-filter="searchFrm" class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <select name="state" lay-verify="">
+                        <option value="1">审核已通过</option>
+                        <option value="0">审核中</option>
+                        <option value="-1">审核未通过</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">应用系统</label>
+                <div class="layui-input-inline">
+                    <select name="applySystem" lay-verify="">
+                        <option value="IOS">IOS</option>
+                        <option value="Android">Android</option>
+                    </select>
+                </div>
+                <div class="layui-inline" style="text-align: center;">
+                    <button type="button" class="layui-btn" lay-submit="" lay-filter="doSearch"><span
+                            class="layui-icon layui-icon-search"></span>查询
+                    </button>
+                    <button type="reset" class="layui-btn layui-btn-warm"><span
+                            class="layui-icon layui-icon-refresh-1"></span>重置
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</blockquote>
+<!-- 查询条件结束-->
+
+
+<!-- 数据表格开始 -->
+<div>
+    <table class="layui-hide" id="applyTable" lay-filter="applyTable"></table>
+    <div id="applyToolBar" style="display: none;">
+    </div>
+	<div id="operateBar" style="display: none;">
+		<button type="button" lay-event="release" class="layui-btn layui-btn-sm">
+			<span class="layui-icon layui-icon-edit">发布</span>
+		</button>
+		<button type="button" lay-event="soldOut" class="layui-btn layui-btn-sm layui-btn-danger">
+			<span class="layui-icon layui-icon-delete">下架</span>
+		</button>
+
+	</div>
+</div>
+
+
+<!-- 数据表格结束 -->
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.extend({
+        dtree: '/layui_ext/dtree/dtree'
+    }).use(['jquery', 'form', 'table', 'layer', 'dtree'], function () {
+        var $ = layui.jquery;
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var dtree = layui.dtree;
+        //加载 数据
+        var tableIns = table.render({
+            elem: '#applyTable'
+            , url: 'http://localhost:9000/apply_server/apply/audit/findAllApply'
+            , title: '应用数据表'
+            , height: 'full-220'
+			, toolbar: 'applyToolBar'
+            , page: true
+            , cols: [[
+                {field: 'id', title: 'ID', align: 'center'}
+                , {field: 'applyName', title: '应用名称', align: 'center'}
+                , {field: 'icon', title: '图标', align: 'center'}
+                , {field: 'applySystem', title: '应用系统', align: 'center'}
+                , {field: 'description', title: '描述', align: 'center'}
+                , {field: 'createTime', title: '创建时间', align: 'center'}
+                , {fixed: 'right', title: '审核', toolbar: '#operateBar', align: 'center', width: '300'}
+            ]]
+        });
+
+        //模糊查询
+        form.on("submit(doSearch)", function (data) {
+            tableIns.reload({
+				url: 'http://localhost:9000/apply_server/apply/audit/conditionQuery',
+                where: {
+					"applyName":data.field.applyName,
+					"applySystem":data.field.applySystem
+				},
+                page: {
+                    curr: 1
+                }
+            });
+            return false;
+        });
+
+        //监听工具条的事件
+        table.on("tool(applyTable)", function (obj) {
+			var data = obj.data; //获得当前行数据
+			switch(obj.event){
+				case 'release':
+					applyRelease(data);
+					break;
+                case 'soldOut':
+                    applySoldOut(data);
+                    break;
+			};
+        });
+
+        //应用审核通过
+        function applyRelease(data) {
+            layer.confirm('你确定发布【'+data.applyName+'】吗？',{icon: 3,title: '提示'},function (index) {
+                $.post("http://localhost:9000/apply_server/apply/release/release",{id:data.id},function (res) {
+                    if (res.code == 0){
+                        tableIns.reload();
+                    }
+                    layer.msg(res.msg);
+                })
+                layer.close(index);
+            })
+        }
+        //应用审核未通过
+        function applySoldOut(data) {
+            layer.confirm('你确定下架【'+data.applyName+'】吗？',{icon: 3,title: '提示'},function (index) {
+                $.post("http://localhost:9000/apply_server/apply/release/soldOut",{id:data.id},function (res) {
+                    if (res.code == 0){
+                        tableIns.reload();
+                    }
+                    layer.msg(res.msg);
+                })
+                layer.close(index);
+            })
+        }
+    });
+</script>
+</body>
+</html>
