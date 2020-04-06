@@ -17,9 +17,15 @@
     <link rel="stylesheet" href="/layui_ext/dtree/font/dtreefont.css" media="all"/>
 </head>
 <body class="childrenBody">
+
 <!-- 查询条件开始 -->
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 5px;">
-    <legend>查询条件</legend>
+
+    <legend>
+              <a><cite>首页</cite></a>
+              <a><cite>应用发布</cite></a>
+<!--        应用发布&#45;&#45;&ndash;&gt;查询条件-->
+    </legend>
 </fieldset>
 <blockquote class="layui-elem-quote">
     <form action="" method="post" id="searchFrm" lay-filter="searchFrm" class="layui-form layui-form-pane">
@@ -58,15 +64,18 @@
     <table class="layui-hide" id="applyTable" lay-filter="applyTable"></table>
     <div id="applyToolBar" style="display: none;">
     </div>
-	<div id="operateBar" style="display: none;">
-		<button type="button" lay-event="release" class="layui-btn layui-btn-sm">
-			<span class="layui-icon layui-icon-edit">发布</span>
-		</button>
-		<button type="button" lay-event="soldOut" class="layui-btn layui-btn-sm layui-btn-danger">
-			<span class="layui-icon layui-icon-delete">下架</span>
-		</button>
+    <div id="operateBar" style="display: none;">
+        <button type="button" lay-event="release" class="layui-btn layui-btn-sm">
+            <span class="layui-icon layui-icon-edit">发布</span>
+        </button>
+        <button type="button" lay-event="soldOut" class="layui-btn layui-btn-sm layui-btn-danger">
+            <span class="layui-icon layui-icon-delete">下架</span>
+        </button>
+        <button type="button" lay-event="applyEvaluate" class="layui-btn layui-btn-sm layui-btn-sm">
+            <span class="layui-icon layui-icon-delete">评价查看</span>
+        </button>
 
-	</div>
+    </div>
 </div>
 
 
@@ -84,10 +93,10 @@
         //加载 数据
         var tableIns = table.render({
             elem: '#applyTable'
-            , url: 'http://localhost:9000/apply_server/apply/audit/findAllApply'
+            , url: 'http://localhost:9000/apply_server/apply/release/findAllApply'
             , title: '应用数据表'
             , height: 'full-220'
-			, toolbar: 'applyToolBar'
+            , toolbar: 'applyToolBar'
             , page: true
             , cols: [[
                 {field: 'id', title: 'ID', align: 'center'}
@@ -96,18 +105,18 @@
                 , {field: 'applySystem', title: '应用系统', align: 'center'}
                 , {field: 'description', title: '描述', align: 'center'}
                 , {field: 'createTime', title: '创建时间', align: 'center'}
-                , {fixed: 'right', title: '审核', toolbar: '#operateBar', align: 'center', width: '300'}
+                , {fixed: 'right', title: '操作', toolbar: '#operateBar', align: 'center', width: '300'}
             ]]
         });
 
         //模糊查询
         form.on("submit(doSearch)", function (data) {
             tableIns.reload({
-				url: 'http://localhost:9000/apply_server/apply/audit/conditionQuery',
+                url: 'http://localhost:9000/apply_server/apply/release/conditionQuery',
                 where: {
-					"applyName":data.field.applyName,
-					"applySystem":data.field.applySystem
-				},
+                    "applyName": data.field.applyName,
+                    "applySystem": data.field.applySystem
+                },
                 page: {
                     curr: 1
                 }
@@ -117,22 +126,26 @@
 
         //监听工具条的事件
         table.on("tool(applyTable)", function (obj) {
-			var data = obj.data; //获得当前行数据
-			switch(obj.event){
-				case 'release':
-					applyRelease(data);
-					break;
+            var data = obj.data; //获得当前行数据
+            switch (obj.event) {
+                case 'release':
+                    applyRelease(data);
+                    break;
                 case 'soldOut':
                     applySoldOut(data);
                     break;
-			};
+                case 'applyEvaluate':
+                    applyEvaluate(data);
+                    break;
+            }
+            ;
         });
 
         //应用审核通过
         function applyRelease(data) {
-            layer.confirm('你确定发布【'+data.applyName+'】吗？',{icon: 3,title: '提示'},function (index) {
-                $.post("http://localhost:9000/apply_server/apply/release/release",{id:data.id},function (res) {
-                    if (res.code == 0){
+            layer.confirm('你确定发布【' + data.applyName + '】吗？', {icon: 3, title: '提示'}, function (index) {
+                $.post("http://localhost:9000/apply_server/apply/release/release", {id: data.id}, function (res) {
+                    if (res.code == 0) {
                         tableIns.reload();
                     }
                     layer.msg(res.msg);
@@ -140,12 +153,26 @@
                 layer.close(index);
             })
         }
+
         //应用审核未通过
         function applySoldOut(data) {
-            layer.confirm('你确定下架【'+data.applyName+'】吗？',{icon: 3,title: '提示'},function (index) {
-                $.post("http://localhost:9000/apply_server/apply/release/soldOut",{id:data.id},function (res) {
-                    if (res.code == 0){
+            layer.confirm('你确定下架【' + data.applyName + '】吗？', {icon: 3, title: '提示'}, function (index) {
+                $.post("http://localhost:9000/apply_server/apply/release/soldOut", {id: data.id}, function (res) {
+                    if (res.code == 0) {
                         tableIns.reload();
+                    }
+                    layer.msg(res.msg);
+                })
+                layer.close(index);
+            })
+        }
+
+        //应用评价信息
+        function applyEvaluate(data) {
+            layer.confirm('你确定查看【' + data.applyName + '】的评价信息么？', {icon: 3, title: '提示'}, function (index) {
+                $.post("http://localhost:9000/apply_server/apply/release/applyState", {id: data.id}, function (res) {
+                    if (res.code == 0) {
+                        location.href = "./applyEvaluateManager.html?id=" + data.id
                     }
                     layer.msg(res.msg);
                 })
@@ -153,6 +180,7 @@
             })
         }
     });
+
 </script>
 </body>
 </html>

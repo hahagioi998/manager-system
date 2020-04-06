@@ -83,7 +83,6 @@ public class RoleController {
      */
     @RequestMapping("/saveRolePermission")
      public Result saveRolePermission(String rId,String[] ids){
-        System.out.println(rId+ids.toString());
         permissionService.saveRolePermission(rId,ids);
         return new Result(true,StatusCode.OK,"保存成功");
      }
