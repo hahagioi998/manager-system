@@ -34,4 +34,62 @@ public class EvaluateServiceImpl implements EvaluateService {
     public int countFindEvaluateByAId(String id) {
         return evaluateMapper.countFindEvaluateByAId(id);
     }
+
+    /**
+     * 通过id删除该评价信息
+     *
+     * @param id
+     */
+    @Override
+    public void deleteEvaluateById(String id) {
+         evaluateMapper.deleteEvaluateById(id);
+    }
+
+    /**
+     * 通过应用名称查看评价信息
+     *
+     * @param applyName
+     * @param page
+     * @param limit
+     * @return
+     */
+    @Override
+    public List<Evaluate> findEvaluateByApplyName(String applyName, Integer page, Integer limit) {
+        return evaluateMapper.findEvaluateByApplyName(applyName,page,limit);
+    }
+
+    /**
+     * 通过应用名称查看评价条数
+     *
+     * @param applyName
+     * @return
+     */
+    @Override
+    public int countFindEvaluateByApplyName(String applyName) {
+        return evaluateMapper.countFindEvaluateByApplyName(applyName);
+    }
+
+    /**
+     * 通过应用系统信息查看评价信息
+     *
+     * @param applySystem
+     * @param page
+     * @param limit
+     * @return
+     */
+    @Override
+    public List<Evaluate> findEvaluateByApplySystem(String applySystem, Integer page, Integer limit) {
+        return evaluateMapper.findEvaluateByApplySystem(applySystem,page,limit);
+    }
+
+    /**
+     * 通过应用系统信息查看评价条数
+     *
+     * @param applySystem
+     * @return
+     */
+    @Override
+    public int countFindEvaluateByApplySystem(String applySystem) {
+        return evaluateMapper.countFindEvaluateByApplySystem(applySystem);
+    }
 }

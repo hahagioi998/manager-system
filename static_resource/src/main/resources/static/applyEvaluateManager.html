@@ -83,21 +83,33 @@
         var table = layui.table;
         var layer = layui.layer;
         var dtree = layui.dtree;
+        var url = location.search;
+        var id = new Object();
+        if (url.indexOf("?")!=-1){
+            var str = url.substr(1);
+            var strs = str.split("&");
+            for (var i = 0; i<strs.length;i++){
+                id[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+            }
+            console.log(id)
+        }
         //加载 数据
         var tableIns = table.render({
             elem: '#evaluateTable'
-            , url: 'http://localhost:9000/apply_server/apply/release/findAllApply'
+            , url: 'http://localhost:9000/apply_server/evaluate/findEvaluate?'+id
             , title: '应用数据表'
             , height: 'full-220'
             , toolbar: 'applyToolBar'
             , page: true
             , cols: [[
                 {field: 'id', title: 'ID', align: 'center'}
-                , {field: 'applyName', title: '应用名称', align: 'center'}
-                , {field: 'icon', title: '图标', align: 'center'}
-                , {field: 'applySystem', title: '应用系统', align: 'center'}
-                , {field: 'description', title: '描述', align: 'center'}
-                , {field: 'createTime', title: '创建时间', align: 'center'}
+                , {field: 'apply_name', title: '应用名称', align: 'center'}
+                , {field: 'apply_system', title: '应用系统', align: 'center'}
+                , {field: 'phoneModel', title: '手机型号', align: 'center'}
+                , {field: 'theme', title: '评价主题', align: 'center'}
+                , {field: 'content', title: '内容', align: 'center'}
+                , {field: 'evaluateTime', title: '评价时间', align: 'center'}
+                , {field: 'customerName', title: '评价人', align: 'center'}
                 , {fixed: 'right', title: '操作', toolbar: '#operateBar', align: 'center', width: '300'}
             ]]
         });
@@ -121,51 +133,19 @@
         table.on("tool(applyTable)", function (obj) {
             var data = obj.data; //获得当前行数据
             switch (obj.event) {
-                case 'release':
-                    applyRelease(data);
-                    break;
-                case 'soldOut':
-                    applySoldOut(data);
-                    break;
-                case 'applyEvaluate':
-                    applyEvaluate(data);
+                case 'delete':
+                    deleteEvaluate(data);
                     break;
             }
             ;
         });
 
-        //应用审核通过
-        function applyRelease(data) {
-            layer.confirm('你确定发布【' + data.applyName + '】吗？', {icon: 3, title: '提示'}, function (index) {
-                $.post("http://localhost:9000/apply_server/apply/release/release", {id: data.id}, function (res) {
+        //删除评价信息
+        function deleteEvaluate(data) {
+            layer.confirm('你确定要删除ID为：【' + data.id + '】的评价吗？', {icon: 3, title: '提示'}, function (index) {
+                $.post("http://localhost:9000/apply_server/evaluate/deleteEvaluate", {id: data.id}, function (res) {
                     if (res.code == 0) {
                         tableIns.reload();
-                    }
-                    layer.msg(res.msg);
-                })
-                layer.close(index);
-            })
-        }
-
-        //应用审核未通过
-        function applySoldOut(data) {
-            layer.confirm('你确定下架【' + data.applyName + '】吗？', {icon: 3, title: '提示'}, function (index) {
-                $.post("http://localhost:9000/apply_server/apply/release/soldOut", {id: data.id}, function (res) {
-                    if (res.code == 0) {
-                        tableIns.reload();
-                    }
-                    layer.msg(res.msg);
-                })
-                layer.close(index);
-            })
-        }
-
-        //应用评价信息
-        function applyEvaluate(data) {
-            layer.confirm('你确定查看【' + data.applyName + '】的评价信息么？', {icon: 3, title: '提示'}, function (index) {
-                $.post("http://localhost:9000/apply_server/apply/release/applyState", {id: data.id}, function (res) {
-                    if (res.code == 0) {
-                        location.href = "./applyEvaluateManager.html?id=" + data.id
                     }
                     layer.msg(res.msg);
                 })
