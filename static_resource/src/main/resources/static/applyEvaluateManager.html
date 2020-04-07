@@ -91,20 +91,20 @@
             for (var i = 0; i<strs.length;i++){
                 id[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
             }
-            console.log(id)
         }
         //加载 数据
         var tableIns = table.render({
             elem: '#evaluateTable'
-            , url: 'http://localhost:9000/apply_server/evaluate/findEvaluate?'+id
+            , url: 'http://localhost:9000/apply_server/evaluate/findEvaluate'
+            ,where: id
             , title: '应用数据表'
             , height: 'full-220'
             , toolbar: 'applyToolBar'
             , page: true
             , cols: [[
                 {field: 'id', title: 'ID', align: 'center'}
-                , {field: 'apply_name', title: '应用名称', align: 'center'}
-                , {field: 'apply_system', title: '应用系统', align: 'center'}
+                , {field: 'applyName', title: '应用名称', align: 'center'}
+                , {field: 'applySystem', title: '应用系统', align: 'center'}
                 , {field: 'phoneModel', title: '手机型号', align: 'center'}
                 , {field: 'theme', title: '评价主题', align: 'center'}
                 , {field: 'content', title: '内容', align: 'center'}
@@ -117,7 +117,7 @@
         //模糊查询
         form.on("submit(doSearch)", function (data) {
             tableIns.reload({
-                url: 'http://localhost:9000/apply_server/apply/release/conditionQuery',
+                url: 'http://localhost:9000/apply_server/evaluate/conditionQuery',
                 where: {
                     "applyName": data.field.applyName,
                     "applySystem": data.field.applySystem
@@ -130,8 +130,9 @@
         });
 
         //监听工具条的事件
-        table.on("tool(applyTable)", function (obj) {
+        table.on("tool(evaluateTable)", function (obj) {
             var data = obj.data; //获得当前行数据
+            console.log(data)
             switch (obj.event) {
                 case 'delete':
                     deleteEvaluate(data);

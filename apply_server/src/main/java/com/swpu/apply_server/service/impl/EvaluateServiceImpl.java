@@ -92,4 +92,30 @@ public class EvaluateServiceImpl implements EvaluateService {
     public int countFindEvaluateByApplySystem(String applySystem) {
         return evaluateMapper.countFindEvaluateByApplySystem(applySystem);
     }
+
+    /**
+     * 通过应用系统信息和应用名称查看应用评价信息
+     *
+     * @param applySystem
+     * @param applyName
+     * @param page
+     * @param limit
+     * @return
+     */
+    @Override
+    public List<Evaluate> findEvaluateByApplySystemAndApplyName(String applySystem, String applyName, Integer page, Integer limit) {
+        return evaluateMapper.findEvaluateByApplySystemAndApplyName(applySystem,applyName,page,limit);
+    }
+
+    /**
+     * 通过应用系统信息和应用名称查看应用评价信息条数
+     *
+     * @param applyName
+     * @param applySystem
+     * @return
+     */
+    @Override
+    public int countFindEvaluateByApplySystemAndApplyName(String applyName, String applySystem) {
+        return evaluateMapper.countFindEvaluateByApplySystemAndApplyName(applyName,applySystem);
+    }
 }

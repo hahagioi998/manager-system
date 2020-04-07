@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>审核详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/css/public.css" media="all"/>
+    <link rel="stylesheet" href="/layui_ext/dtree/dtree.css" media="all"/>
+    <link rel="stylesheet" href="/layui_ext/dtree/font/dtreefont.css" media="all"/>
+</head>
+<body class="childrenBody">
+
+<div class="layui-card">
+    <div class="layui-card-header">基本信息</div>
+    <div class="layui-card-body">
+        <div class="layui-form-item basicInfo">
+
+        </div>
+    </div>
+
+    <div class="layui-card-header">应用截图</div>
+    <div class="layui-card-body">
+        <div class="layui-form-item printScreen">
+            <div class="layui-row">
+                <div class="layui-col-xs3">
+                    <div class="grid-demo grid-demo-bg1">
+                        <img src="" height="280px" width="200px">
+                    </div>
+                </div>
+                <div class="layui-col-xs3">
+                    <div class="grid-demo">
+                        <img src="" height="280px" width="200px">
+                    </div>
+                </div>
+                <div class="layui-col-xs3">
+                    <div class="grid-demo grid-demo-bg1">
+                        <img src="" height="280px" width="200px">
+                    </div>
+                </div>
+                <div class="layui-col-xs3">
+                    <div class="grid-demo">
+                        <img src="" height="280px" width="200px">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-md6">
+        </div>
+        <div class="layui-col-md6">
+            <button type="button" class="layui-btn layui-btn-normal">返回</button>
+        </div>
+    </div>
+    <script type="text/javascript" src="/layui/layui.js"></script>
+    <script type="text/javascript">
+        layui.use('jquery', function () {
+            var $ = layui.jquery;
+            //获取链接参数
+            var url = location.search;
+            var params = new Object();
+            if (url.indexOf("?") != -1) {
+                var str = url.substr(1);
+                var strs = str.split("&");
+                for (var i = 0; i < strs.length; i++) {
+                    params[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+                }
+            }
+            var id = params.id;
+            //发送ajax请求用户想起信息
+            $.ajax({
+                url: 'http://localhost:9000/apply_server/apply/myApply/queryDetail',
+                method: 'get',
+                data: {
+                    "id": id
+                },
+                async: false,
+                success: function (data) {
+                    console.log(data)
+                    console.log("data.data.applySystem:" + data.data.applySystem)
+                    if (data.code == 0) {
+                        $(".basicInfo")
+                            .append(
+                                '<div class="layui-col-md4"><li>应用名称：'
+                                + data.data.applyName
+
+                                + ' </li></div>'
+                                + '<div class="layui-col-md4"><li>应用系统：'
+                                + data.data.applySystem
+
+                                + ' </li></div>'
+                                + '<div class="layui-col-md4"><li>应用图标：'
+                                + data.data.icon
+                                + ' </li></div></br></br>'
+                                + '<div class="layui-block"><li>应用介绍：'
+                                + data.data.description
+                                + ' </li></div>'
+                            )
+                    }
+
+                }
+            });
+        })
+
+
+    </script>
+</body>
+</html>

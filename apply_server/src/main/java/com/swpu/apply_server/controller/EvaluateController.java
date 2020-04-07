@@ -35,6 +35,37 @@ public class EvaluateController {
 
     @RequestMapping("/conditionQuery")
     public Result conditionQuery(String applyName, String applySystem, @RequestParam Integer page, @RequestParam Integer limit) {
-        return null;
+        page = (page - 1) * limit;
+        /**
+         * 当应用名称不为空应用系统为空时
+         */
+        if (!"".equals(applyName) && applyName != null && (applySystem == null || "".equals(applySystem))) {
+            List<Evaluate> evaluates = evaluateService.findEvaluateByApplyName(applyName, page, limit);
+            if (evaluates.size() == 0) {
+                return new Result(false, StatusCode.ERROR, "您所查询的数据不存在", evaluateService.countFindEvaluateByApplyName(applyName));
+            }
+            return new Result(true, StatusCode.OK, "查询成功", evaluates, evaluateService.countFindEvaluateByApplyName(applyName));
+        }
+        /**
+         * 当应用名称为空应用系统不为空时
+         */
+        if ("".equals(applyName) || applyName == null && (!"".equals(applySystem) && applySystem != null)) {
+            List<Evaluate> evaluates = evaluateService.findEvaluateByApplySystem(applySystem, page, limit);
+            if (evaluates.size() == 0) {
+                return new Result(false, StatusCode.ERROR, "您所查询的数据不存在", evaluateService.countFindEvaluateByApplySystem(applySystem));
+            }
+            return new Result(true, StatusCode.OK, "查询成功", evaluates, evaluateService.countFindEvaluateByApplySystem(applySystem));
+        }
+        /**
+         * 当应用名称和应用系统都不为空时
+         */
+        if (!"".equals(applyName) && applyName != null && (!"".equals(applySystem) && applySystem != null)) {
+            List<Evaluate> evaluates = evaluateService.findEvaluateByApplySystemAndApplyName(applyName, applySystem, page, limit);
+            if (evaluates.size() == 0) {
+                return new Result(false, StatusCode.ERROR, "您所查询的数据不存在", evaluateService.countFindEvaluateByApplySystemAndApplyName(applyName, applySystem));
+            }
+            return new Result(true, StatusCode.OK, "查询成功", evaluates, evaluateService.countFindEvaluateByApplySystemAndApplyName(applyName, applySystem));
+        }
+        return new Result(false, StatusCode.ERROR, "您查询的数据不存在", 0);
     }
 }

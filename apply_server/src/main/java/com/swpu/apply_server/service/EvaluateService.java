@@ -55,4 +55,21 @@ public interface EvaluateService {
      * @return
      */
     int countFindEvaluateByApplySystem(String applySystem);
+
+    /**
+     * 通过应用系统信息和应用名称查看应用评价信息
+     * @param applySystem
+     * @param applyName
+     * @param page
+     * @param limit
+     * @return
+     */
+    List<Evaluate> findEvaluateByApplySystemAndApplyName(String applySystem,String applyName,Integer page,Integer limit);
+    /**
+     * 通过应用系统信息和应用名称查看应用评价信息条数
+     * @param applySystem
+     * @param applyName
+     * @return
+     */
+    int countFindEvaluateByApplySystemAndApplyName(String applyName,String applySystem);
 }

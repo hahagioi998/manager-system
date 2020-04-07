@@ -173,7 +173,6 @@
                 $.post("http://localhost:9000/apply_server/apply/release/applyState", {id: data.id}, function (res) {
                     if (res.code == 0) {
                         location.href = "./applyEvaluateManager.html?id=" + data.id
-                        // tableIns.reload();
                     }
                     layer.msg(res.msg);
                 })

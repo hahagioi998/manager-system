@@ -31,6 +31,15 @@ public class Evaluate implements Serializable {
      * 手机型号
      */
     private String phoneModel;
+    /**
+     * 应用名称
+     */
+    private String applyName;
+
+    /**
+     * 应用系统
+     */
+    private String applySystem;
 
     public String getId() {
         return id;
@@ -86,5 +95,21 @@ public class Evaluate implements Serializable {
 
     public void setPhoneModel(String phoneModel) {
         this.phoneModel = phoneModel;
+    }
+
+    public String getApplyName() {
+        return applyName;
+    }
+
+    public void setApplyName(String applyName) {
+        this.applyName = applyName;
+    }
+
+    public String getApplySystem() {
+        return applySystem;
+    }
+
+    public void setApplySystem(String applySystem) {
+        this.applySystem = applySystem;
     }
 }
