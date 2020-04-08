@@ -28,90 +28,99 @@
 
     <div class="layui-card-header">应用截图</div>
     <div class="layui-card-body">
-        <div class="layui-form-item printScreen">
-            <div class="layui-row">
-                <div class="layui-col-xs3">
-                    <div class="grid-demo grid-demo-bg1">
-                        <img src="" height="280px" width="200px">
-                    </div>
-                </div>
-                <div class="layui-col-xs3">
-                    <div class="grid-demo">
-                        <img src="" height="280px" width="200px">
-                    </div>
-                </div>
-                <div class="layui-col-xs3">
-                    <div class="grid-demo grid-demo-bg1">
-                        <img src="" height="280px" width="200px">
-                    </div>
-                </div>
-                <div class="layui-col-xs3">
-                    <div class="grid-demo">
-                        <img src="" height="280px" width="200px">
-                    </div>
-                </div>
+        <div class="layui-form-item">
+            <div class="layui-row printScreen">
             </div>
         </div>
     </div>
     <div class="layui-row">
         <div class="layui-col-md6">
+            <div class="grid-demo grid-demo-bg1">&nbsp;</div>
+            <!--            <button type="button" class="layui-btn layui-btn-normal layui-center" onclick="location.href = './myApplyManager.html'">返回</button>-->
         </div>
         <div class="layui-col-md6">
-            <button type="button" class="layui-btn layui-btn-normal">返回</button>
+            <div class="grid-demo grid-demo-bg1">
+                <button type="button" class="layui-btn layui-btn-normal layui-center"
+                        onclick="location.href = './myApplyManager.html'">返回
+                </button>
+            </div>
         </div>
     </div>
 </div>
-    <script type="text/javascript" src="/layui/layui.js"></script>
-    <script type="text/javascript">
-        layui.use('jquery', function () {
-            var $ = layui.jquery;
-            //获取链接参数
-            var url = location.search;
-            var params = new Object();
-            if (url.indexOf("?") != -1) {
-                var str = url.substr(1);
-                var strs = str.split("&");
-                for (var i = 0; i < strs.length; i++) {
-                    params[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use('jquery', function () {
+        var $ = layui.jquery;
+        //获取链接参数
+        var url = location.search;
+        var params = new Object();
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            var strs = str.split("&");
+            for (var i = 0; i < strs.length; i++) {
+                params[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+            }
+        }
+        var id = params.id;
+        //发送ajax请求用户想起信息
+        $.ajax({
+            url: 'http://localhost:9000/apply_server/apply/myApply/queryDetail',
+            method: 'get',
+            data: {
+                "id": id
+            },
+            async: false,
+            success: function (data) {
+                if (data.code == 0) {
+                    $(".basicInfo")
+                        .append(
+                            '<div class="layui-col-md4"><li>应用名称：'
+                            + data.data.applyName
+
+                            + ' </li></div>'
+                            + '<div class="layui-col-md4"><li>应用系统：'
+                            + data.data.applySystem
+
+                            + ' </li></div>'
+                            + '<div class="layui-col-md4"><li>应用图标：'
+                            + data.data.icon
+                            + ' </li></div></br></br>'
+                            + '<div class="layui-block"><li>应用介绍：'
+                            + data.data.description
+                            + ' </li></div>'
+                        )
+                }
+
+            }
+        });
+        /**
+         * 请求图片截图
+         */
+        $.ajax({
+            url: 'http://localhost:9000/apply_server/apply/myApply/printScreen',
+            method: 'get',
+            data: {
+                "id": id
+            },
+            async: false,
+            success: function (data) {
+                if (data.code == 0) {
+                    var length = data.data.length;
+                    console.log("length:" + length)
+                    for (var i = 0; i < length; i++) {
+                        $(".printScreen").append(
+                            '<div class="layui-col-xs3"><div class="grid-demo grid-demo-bg1"><img  height="280px" width="200px" src="'
+                            + data.data[i].url
+                            + '"> </div> </div>'
+                        )
+                    }
                 }
             }
-            var id = params.id;
-            //发送ajax请求用户想起信息
-            $.ajax({
-                url: 'http://localhost:9000/apply_server/apply/myApply/queryDetail',
-                method: 'get',
-                data: {
-                    "id": id
-                },
-                async: false,
-                success: function (data) {
-                    console.log(data)
-                    console.log("data.data.applySystem:" + data.data.applySystem)
-                    if (data.code == 0) {
-                        $(".basicInfo")
-                            .append(
-                                '<div class="layui-col-md4"><li>应用名称：'
-                                + data.data.applyName
+        });
 
-                                + ' </li></div>'
-                                + '<div class="layui-col-md4"><li>应用系统：'
-                                + data.data.applySystem
-
-                                + ' </li></div>'
-                                + '<div class="layui-col-md4"><li>应用图标：'
-                                + data.data.icon
-                                + ' </li></div></br></br>'
-                                + '<div class="layui-block"><li>应用介绍：'
-                                + data.data.description
-                                + ' </li></div>'
-                            )
-                    }
-
-                }
-            });
-        })
+    })
 
 
-    </script>
+</script>
 </body>
 </html>

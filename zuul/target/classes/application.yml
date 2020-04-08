@@ -14,6 +14,7 @@ zuul:
     system-manager: /system_manager/**
     static-resource: /static_resource/**
     apply-server: /apply_server/**
+    file-upload: /file_upload/**
   servlet-path: /
   ignored-services: '*'
   sensitive-headers: Access-Control-Allow-Origin

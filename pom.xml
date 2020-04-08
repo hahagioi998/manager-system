@@ -14,6 +14,7 @@
         <module>zuul</module>
         <module>static_resource</module>
         <module>apply_server</module>
+        <module>file_upload</module>
     </modules>
     <packaging>pom</packaging>
     <name>manager_system</name>

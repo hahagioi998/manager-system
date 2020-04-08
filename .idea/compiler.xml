@@ -11,6 +11,7 @@
         <module name="static_resource" />
         <module name="common" />
         <module name="system_manager" />
+        <module name="file_upload" />
         <module name="apply_server" />
       </profile>
     </annotationProcessing>
@@ -20,6 +21,7 @@
       <module name="apply_server" options="-parameters" />
       <module name="common" options="-parameters" />
       <module name="eureka_server" options="-parameters" />
+      <module name="file_upload" options="-parameters" />
       <module name="static_resource" options="-parameters" />
       <module name="system_manager" options="-parameters" />
       <module name="zuul" options="-parameters" />
