@@ -95,7 +95,12 @@
             , cols: [[
                 {field: 'id', title: 'ID', align: 'center'}
                 , {field: 'applyName', title: '应用名称', align: 'center'}
-                , {field: 'icon', title: '图标', align: 'center'}
+                , {field: 'icon', title: '图标', align: 'center',templet:function (d) {
+                        if (d.icon != null){
+                            return '<img alt="icon" src="http://localhost:9000/file_upload/fileUpload/showPicture?url=' +d.icon+'">'
+                        }
+                        return  '<img src="#" alt="icon 不存在">'
+                    }}
                 , {field: 'applySystem', title: '应用系统', align: 'center'}
                 , {field: 'createTime', title: '创建时间', align: 'center'}
                 , {field: 'state', title: '状态', align: 'center'}

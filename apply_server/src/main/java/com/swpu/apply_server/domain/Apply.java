@@ -1,6 +1,8 @@
 package com.swpu.apply_server.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Apply implements Serializable {
     private String id;
@@ -23,6 +25,7 @@ public class Apply implements Serializable {
     public String getState() {
         return state;
     }
+
 
     public void setState(String state) {
         this.state = state;

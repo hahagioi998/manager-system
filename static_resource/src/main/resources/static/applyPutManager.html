@@ -77,12 +77,14 @@
         <div class="layui-row">
             <div class="layui-col-md6">
                 <div class="grid-demo grid-demo-bg1">
-                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">取消</button>
+                    &nbsp;
+<!--                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">取消</button>-->
                 </div>
             </div>
             <div class="layui-col-md6">
                 <div class="grid-demo">
-                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" lay-submit="" lay-filter="submit">提交</button>
+                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" lay-submit="" lay-filter="doSubmit">提交</button>
+                    <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">取消</button>
                 </div>
             </div>
         </div>
@@ -146,8 +148,36 @@
             }
             ,done: function(res){
                 printScreens.push(res.data)
+
             }
         });
+
+        form.on("submit(doSubmit)", function (data) {
+            console.log(printScreens)
+            console.log(iconName)
+
+            $.ajax({
+                url: "http://localhost:9000/apply_server/apply/uploadApply/addApply",
+                method: "POST",
+                data: {
+                    "applyName": data.field.applyName,
+                    "icon": iconName,
+                    "applySystem": data.field.applySystem,
+                    "description": data.field.description,
+                    "printScreen": printScreens
+                },
+                async: true,
+                success: function (data) {
+                    if (data.code == 0){
+                        layer.msg(data.msg)
+                    }
+                }
+            });
+            return false;
+
+        })
+
+
 
     });
 

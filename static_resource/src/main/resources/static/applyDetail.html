@@ -83,7 +83,7 @@
 
                             + ' </li></div>'
                             + '<div class="layui-col-md4"><li>应用图标：'
-                            + data.data.icon
+                            +'<img alt="icon" height="80px" width="80px" src="http://localhost:9000/file_upload/fileUpload/showPicture?url=' + data.data.icon+'">'
                             + ' </li></div></br></br>'
                             + '<div class="layui-block"><li>应用介绍：'
                             + data.data.description
@@ -106,10 +106,9 @@
             success: function (data) {
                 if (data.code == 0) {
                     var length = data.data.length;
-                    console.log("length:" + length)
                     for (var i = 0; i < length; i++) {
                         $(".printScreen").append(
-                            '<div class="layui-col-xs3"><div class="grid-demo grid-demo-bg1"><img  height="280px" width="200px" src="'
+                            '<div class="layui-col-xs3"><div class="grid-demo grid-demo-bg1"><img  height="280px" width="200px" src="http://localhost:9000/file_upload/fileUpload/showPicture?url='
                             + data.data[i].url
                             + '"> </div> </div>'
                         )

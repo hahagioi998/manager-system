@@ -2,15 +2,15 @@ package com.swpu.file_upload.controller;
 
 import domain.Result;
 import domain.StatusCode;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.UUID;
 @RestController
 @RequestMapping("/fileUpload")
@@ -25,11 +25,10 @@ public class FileController {
         } else {
             // 获取文件名
             String fileName = file.getOriginalFilename();
-            System.out.println("fileName:"+fileName);
             String suffix = fileName.substring(fileName.lastIndexOf("."));
-            String newFileName = UUID.randomUUID().toString()+fileName;
+            String newFileName = UUID.randomUUID().toString()+suffix;
+            System.out.println("newFileName:"+newFileName);
             // 设置文件上传后的路径
-            String savePath = "img";
             String rootPath = System.getProperty("user.dir");
 //            D:\Project\IdeaProjects\manager_system\file_upload\src\main\resources\img
             String filePath = new File(rootPath+"\\file_upload\\src\\main\\resources\\img").getPath();
@@ -44,4 +43,36 @@ public class FileController {
             return new Result(true,StatusCode.OK,"上传成功",newFileName,1);
         }
     }
+
+
+    @RequestMapping("/showPicture")
+    public void showPicture(@RequestParam("url") String url, HttpServletResponse response){
+        System.out.println("图片显示！");
+        FileInputStream fis = null;
+        OutputStream os = null;
+        // 设置文件上传后的路径
+        String rootPath = System.getProperty("user.dir");
+        //url是你服务器上图片的绝对路径
+        String filePath = new File(rootPath+"\\file_upload\\src\\main\\resources\\img").getPath()+"\\"+url;
+        File file = new File(filePath);
+        if(file.exists()){
+            try {
+                fis = new FileInputStream(file);
+                long size = file.length();
+                byte[] temp = new byte[(int) size];
+                fis.read(temp, 0, (int) size);
+                fis.close();
+                byte[] data = temp;
+                response.setContentType("image/png");
+                os = response.getOutputStream();
+                os.write(data);
+                os.flush();
+                os.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
