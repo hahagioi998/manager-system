@@ -1,5 +1,6 @@
 package com.swpu.system_manager.service.impl;
 
+import com.swpu.system_manager.domain.LoginInfo;
 import com.swpu.system_manager.domain.User;
 import com.swpu.system_manager.mapper.RoleMapper;
 import com.swpu.system_manager.mapper.UserMapper;
@@ -30,6 +31,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleMapper roleMapper;
+    @Autowired
+    private HttpServletRequest request;
 
 //    @Autowired
 //    private HttpServletRequest request;
@@ -70,21 +73,6 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 通过用户名查询用户信息
-     *
-     * @param userName
-     * @return
-     */
-    @Override
-    public User findByUserName(String userName) {
-        User user = userMapper.findByUserName(userName);
-        if (user == null){
-            return null;
-        }
-        return user;
-    }
-
-    /**
      * 添加用户信息
      *
      * @param user
@@ -96,6 +84,10 @@ public class UserServiceImpl implements UserService {
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         user.setCreateTime(time);
         user.setUpdateTime(time);
+        String token = (String) request.getAttribute("claims_superAdmin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         userMapper.addUser(user);
     }
 
@@ -107,6 +99,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void updateUser(User user, String id) {
+        String token = (String) request.getAttribute("claims_superAdmin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         userMapper.updateUser(user,id);
     }
 
@@ -117,6 +113,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void delUser(String id) {
+        String token = (String) request.getAttribute("claims_superAdmin");
+        System.out.println("claims_superAdmin:"+token);
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         userMapper.delUser(id);
     }
 
@@ -192,5 +193,16 @@ public class UserServiceImpl implements UserService {
                 roleMapper.insertUserRole(uId,rId);
             }
         }
+    }
+
+    /**
+     * 保存登录日志
+     *
+     * @param loginInfo
+     */
+    @Override
+    public void saveLoginInfo(LoginInfo loginInfo) {
+        loginInfo.setId(idWorker.nextId()+"");
+        userMapper.saveLoginInfo(loginInfo);
     }
 }

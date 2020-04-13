@@ -6,11 +6,14 @@ import com.swpu.system_manager.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 @Service
 public class PermissionServiceImpl implements PermissionService {
     @Autowired
     private PermissionMapper permissionMapper;
+    @Autowired
+    private HttpServletRequest request;
     /**
      * 通过角色id查询权限信息
      *
@@ -19,6 +22,10 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public List<String> queryRolePermissionIdsByRid(String id) {
+        String token = (String) request.getAttribute("claims_admin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         return permissionMapper.queryRolePermissionIdsByRid(id);
     }
 
@@ -30,6 +37,10 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public void saveRolePermission(String rId, String[] ids) {
+        String token = (String) request.getAttribute("claims_superAdmin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         permissionMapper.deleteRolePermissionByPid(rId);
         if(null!=ids&&ids.length>0) {
             for (String pId : ids) {
@@ -45,6 +56,10 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public List<Permission> findAllPermission() {
+        String token = (String) request.getAttribute("claims_admin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         return permissionMapper.findAllPermission();
     }
 

@@ -90,6 +90,12 @@
         var table = layui.table;
         var layer = layui.layer;
         var dtree = layui.dtree;
+        //全局设置头部信息
+        $.ajaxSetup({
+            headers: {
+                "Authorization": localStorage.getItem("Authorization")
+            }
+        });
         //加载 数据
         var tableIns = table.render({
             elem: '#applyTable'

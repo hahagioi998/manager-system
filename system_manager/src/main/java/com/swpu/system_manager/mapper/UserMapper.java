@@ -1,5 +1,6 @@
 package com.swpu.system_manager.mapper;
 
+import com.swpu.system_manager.domain.LoginInfo;
 import com.swpu.system_manager.domain.User;
 import com.swpu.system_manager.vo.UserVo;
 import org.apache.ibatis.annotations.*;
@@ -107,7 +108,7 @@ public interface UserMapper {
      * @param phoneNumber
      * @return
      */
-    @Select("select id,user_name,sex,phone_number,create_time,update_time,(case state when 1 then '启用' when -1 then '禁用' end) state FROM user where phone_number = #{phoneNumber}")
+    @Select("select id,user_name,sex,phone_number,password,create_time,update_time,(case state when 1 then '启用' when -1 then '禁用' end) state FROM user where phone_number = #{phoneNumber}")
     User findByPhoneNumber(String phoneNumber);
 
     /**
@@ -117,4 +118,11 @@ public interface UserMapper {
      */
     @Update("update user set password = #{password} where id = #{id}")
     void reSetPassword(String id,String password);
+
+    /**
+     * 保存登录日志
+     * @param loginInfo
+     */
+    @Insert("insert into login_info(id,login_name,login_time,create_time) values (#{id},#{loginName},DATE_FORMAT(NOW(),'%Y-%m-%d %H:%m:%s'),DATE_FORMAT(NOW(),'%Y-%m-%d %H:%m:%s'))")
+    void saveLoginInfo(LoginInfo loginInfo);
 }

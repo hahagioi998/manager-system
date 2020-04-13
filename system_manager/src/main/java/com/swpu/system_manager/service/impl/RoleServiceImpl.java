@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import util.IdWorker;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -14,6 +15,8 @@ public class RoleServiceImpl implements RoleService {
     private RoleMapper roleMapper;
     @Autowired
     private IdWorker idWorker;
+    @Autowired
+    private HttpServletRequest request;
 
     /**
      * 查询当前用户拥有的角色ID集合
@@ -23,8 +26,28 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public List<String> queryUserRoleIdsByUid(String id) {
+        String token = (String) request.getAttribute("claims_admin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         return roleMapper.queryUserRoleIdsByUid(id);
     }
+
+    /**
+     * 通过用户ID查询权限集合
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public List<String> queryPermissionByUId(String id) {
+        List<String> roles = roleMapper.queryPermissionByUId(id);
+        if (roles.size()>0){
+            return roles;
+        }
+        return null;
+    }
+
 
     /**
      * 查询当前可用角色
@@ -33,6 +56,10 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public List<Role> ableToUseRole() {
+        String token = (String) request.getAttribute("claims_admin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         return roleMapper.ableToUseRole();
     }
 
@@ -84,6 +111,10 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public List<Role> findAllRole() {
+        String token = (String) request.getAttribute("claims_admin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         return roleMapper.finAllRole();
     }
 
@@ -96,6 +127,10 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public List<Role> findRoleByNameAndState(String roleName, String state) {
+        String token = (String) request.getAttribute("claims_admin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         return roleMapper.findRoleByNameAndState(roleName,state);
     }
 
@@ -107,6 +142,10 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void addRole(Role role) {
         role.setId(idWorker.nextId()+"");
+        String token = (String) request.getAttribute("claims_superAdmin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         roleMapper.addRole(role);
     }
 
@@ -117,6 +156,10 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public void updateRole(Role role) {
+        String token = (String) request.getAttribute("claims_superAdmin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         roleMapper.updateRole(role);
     }
 
@@ -127,6 +170,10 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public void deleteRole(String id) {
+        String token = (String) request.getAttribute("claims_superAdmin");
+        if (token == null || "".equals(token)){
+            throw new RuntimeException("权限不足");
+        }
         roleMapper.deleteRole(id);
     }
 }

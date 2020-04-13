@@ -160,10 +160,19 @@
         var form = layui.form;
         var table = layui.table;
         var layer = layui.layer;
+        //全局设置头部信息
+        $.ajaxSetup({
+            headers: {
+                "Authorization": localStorage.getItem("Authorization")
+            }
+        });
         //加载 数据
         tableIns = table.render({
             elem: '#userTable'
             , url: 'http://localhost:9000/system_manager/user/findAll'
+            // ,headers:{
+            //     "Authorization": localStorage.getItem("Authorization")
+            // }
             , toolbar: '#userToolBar' //开启头部工具栏，并为其绑定左侧模板
             , height: 'full-250'
             , page: true
@@ -192,7 +201,10 @@
         form.on("submit(doSearch)", function (data) {
             tableIns.reload({
                 url: 'http://localhost:9000/system_manager/user/byPhoneAndState',
-                page:true,
+                headers: {
+                    "Authorization": localStorage.getItem("Authorization")
+                },
+                page: true,
                 where: {
                     "phoneNumber": data.field.phoneNumber,
                     "state": data.field.state
@@ -291,7 +303,8 @@
                 // $.ajax({
                 //     url: ""
                 // });
-                $.post("http://localhost:9000/system_manager/user/delUser", {id: data.id}, function (res) {
+
+                $.post("http://localhost:9000/system_manager/user/delUser",{id: data.id}, function (res) {
                     if (res.code == 200) {
                         tableIns.reload();
                     }
@@ -303,14 +316,14 @@
 
 
         // 重置密码
-        function resetPwd(data){
+        function resetPwd(data) {
             console.log(data)
-        	layer.confirm('你确定要重置【'+data.userName+'】这个用户密码吗?', {icon: 3, title:'提示'}, function(index){
-        		$.post("http://localhost:9000/system_manager/user/reSetPwd",{id:data.id},function(res){
-        			layer.msg(res.msg);
-        		})
-        	   layer.close(index);
-        	});
+            layer.confirm('你确定要重置【' + data.userName + '】这个用户密码吗?', {icon: 3, title: '提示'}, function (index) {
+                $.post("http://localhost:9000/system_manager/user/reSetPwd", {id: data.id}, function (res) {
+                    layer.msg(res.msg);
+                })
+                layer.close(index);
+            });
         }
 
         //初始化查询条件下拉树
@@ -364,50 +377,51 @@
 
 
         //打开分配角色的弹出层
-        function selectRole(data){
-        	mainIndex=layer.open({
-        		type:1,
-        		content:$("#selectUserRoleDiv"),
-        		area:['800px','600px'],
-        		title:'分配【'+data.userName+'】的角色',
-        		btn: ['<span class=layui-icon>&#xe605;确认分配</span>', '<span class=layui-icon>&#x1006;关闭窗口</span>'],
-        	    yes: function(index, layero){
+        function selectRole(data) {
+            mainIndex = layer.open({
+                type: 1,
+                content: $("#selectUserRoleDiv"),
+                area: ['800px', '600px'],
+                title: '分配【' + data.userName + '】的角色',
+                btn: ['<span class=layui-icon>&#xe605;确认分配</span>', '<span class=layui-icon>&#x1006;关闭窗口</span>'],
+                yes: function (index, layero) {
 
-        	    	var checkStatus = table.checkStatus('roleTable');
-        	    	var params="uId="+data.id;
-        	    	$.each(checkStatus.data,function(index,item){
-        	    		params+="&ids="+item.id;
-        	    	});
-        	    	$.post("http://localhost:9000/system_manager/user/saveUserRole",params,function(res){
-        	    		layer.msg(res.msg);
-        	    	})
-        	    },
-        	    btn2: function(index, layero){
-        	    //return false 开启该代码可禁止点击该按钮关闭
-        	    },
-        	    btnAlign: 'c',
-        		success:function(){
-        			initRoleTable(data);
-        		}
-        	});
+                    var checkStatus = table.checkStatus('roleTable');
+                    var params = "uId=" + data.id;
+                    $.each(checkStatus.data, function (index, item) {
+                        params += "&ids=" + item.id;
+                    });
+                    $.post("http://localhost:9000/system_manager/user/saveUserRole", params, function (res) {
+                        layer.msg(res.msg);
+                    })
+                },
+                btn2: function (index, layero) {
+                    //return false 开启该代码可禁止点击该按钮关闭
+                },
+                btnAlign: 'c',
+                success: function () {
+                    initRoleTable(data);
+                }
+            });
         }
 
         var roleTableIns;
+
         //初始化角色列表
-        function initRoleTable(data){
-        	roleTableIns=table.render({
-        		 elem: '#roleTable'
-        	    ,url:'http://localhost:9000/system_manager/user/initRoleByUserId'
-        	    ,where:{
-        	    	id:data.id
-        	    }
-        	    ,cols: [ [
-        	       {type:'checkbox',align:'center'}
-        	      ,{field:'id', title:'ID',align:'center'}
-        	      ,{field:'roleName', title:'角色名称',align:'center'}
-        	      ,{field:'description', title:'角色备注',align:'center'}
-        	    ] ]
-        	});
+        function initRoleTable(data) {
+            roleTableIns = table.render({
+                elem: '#roleTable'
+                , url: 'http://localhost:9000/system_manager/user/initRoleByUserId'
+                , where: {
+                    id: data.id
+                }
+                , cols: [[
+                    {type: 'checkbox', align: 'center'}
+                    , {field: 'id', title: 'ID', align: 'center'}
+                    , {field: 'roleName', title: '角色名称', align: 'center'}
+                    , {field: 'description', title: '角色备注', align: 'center'}
+                ]]
+            });
         }
     });
 </script>

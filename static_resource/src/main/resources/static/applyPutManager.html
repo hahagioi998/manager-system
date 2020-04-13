@@ -104,6 +104,13 @@
         var dtree = layui.dtree;
         var upload = layui.upload;
 
+        //全局设置头部信息
+        $.ajaxSetup({
+            headers: {
+                "Authorization": localStorage.getItem("Authorization")
+            }
+        });
+
         //应用图标上传
 
         var iconName;

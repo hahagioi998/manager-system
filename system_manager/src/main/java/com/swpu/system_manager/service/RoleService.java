@@ -13,7 +13,12 @@ public interface RoleService {
      */
     List<String> queryUserRoleIdsByUid(String id);
 
-
+    /**
+     * 通过用户ID查询权限集合
+     * @param id
+     * @return
+     */
+    List<String> queryPermissionByUId(String id);
     /**
      * 查询当前可用角色
      * @return
@@ -74,4 +79,6 @@ public interface RoleService {
      * @param id
      */
     void deleteRole(String id);
+
+
 }

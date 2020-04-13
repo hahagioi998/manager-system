@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *Jwt工具类
@@ -41,13 +42,14 @@ public class JwtUtil {
      * @param subject
      * @return
      */
-    public String createJWT(String id, String subject, String roles) {
+    public String createJWT(String id, String subject, List<String> roles,String state) {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         JwtBuilder builder = Jwts.builder().setId(id)
                 .setSubject(subject)
                 .setIssuedAt(now)
-                .signWith(SignatureAlgorithm.HS256, key).claim("roles", roles);
+                .signWith(SignatureAlgorithm.HS256, key).claim("roles", roles)
+                .signWith(SignatureAlgorithm.HS256,key).claim("state",state);
         if (ttl > 0) {
             builder.setExpiration( new Date( nowMillis + ttl));
         }

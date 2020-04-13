@@ -1,5 +1,6 @@
 package com.swpu.system_manager.service;
 
+import com.swpu.system_manager.domain.LoginInfo;
 import com.swpu.system_manager.domain.User;
 import com.swpu.system_manager.vo.UserVo;
 
@@ -22,14 +23,6 @@ public interface UserService {
      * @return
      */
     User findById(String id);
-
-    /**
-     * 通过用户名查询用户信息
-     * @param userName
-     * @return
-     */
-    User findByUserName(String userName);
-
 
     /**
      * 添加用户信息
@@ -87,4 +80,10 @@ public interface UserService {
      * @param ids
      */
     void saveUserRole(String uid, String[] ids);
+
+    /**
+     * 保存登录日志
+     * @param loginInfo
+     */
+    void saveLoginInfo(LoginInfo loginInfo);
 }

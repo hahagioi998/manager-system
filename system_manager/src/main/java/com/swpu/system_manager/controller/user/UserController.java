@@ -1,5 +1,6 @@
 package com.swpu.system_manager.controller.user;
 
+import com.swpu.system_manager.domain.LoginInfo;
 import com.swpu.system_manager.domain.Role;
 import com.swpu.system_manager.domain.User;
 import com.swpu.system_manager.service.RoleService;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import util.JwtUtil;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +34,20 @@ public class UserController {
         if (loginUser == null) {
             return new Result(false, StatusCode.LOGINERROR, "登录失败");
         }
-        String token = jwtUtil.createJWT(user.getId(), user.getPhoneNumber(), "admin");
+        String loginId = loginUser.getId();
+        List<String> roles = roleService.queryPermissionByUId(loginId);
+        String state = userService.findById(loginId).getState();
+        if (!"启用".equals(state)){
+            throw new RuntimeException("该用户被禁用,请联系超级管理员");
+        }
+        LoginInfo loginInfo = new LoginInfo();
+        loginInfo.setLoginName(userService.findById(loginId).getUserName());
+        userService.saveLoginInfo(loginInfo);
+        String token = jwtUtil.createJWT(loginUser.getId(), user.getPhoneNumber(), roles,state);
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
-        map.put("role", "admin");
+        map.put("roles", roles);
+        map.put("id",loginUser.getId());
         int count = map.size();
         return new Result(true, StatusCode.OK, "登录成功", map, count);
     }
@@ -105,7 +117,6 @@ public class UserController {
         }
         return new Result(true, StatusCode.OK, "查询成功", userService.findById(id), 1);
     }
-
     /**
      * 更新用户信息
      *
@@ -133,6 +144,7 @@ public class UserController {
      */
     @RequestMapping(value = "/delUser", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     public Result delUser(@RequestParam String id) {
+
         userService.delUser(id);
         return new Result(true, StatusCode.DelSuccess, "删除成功");
     }

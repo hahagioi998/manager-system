@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>手机应用后台管理系统登录</title>
+
+    <link rel="stylesheet" href="login/css/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="login/css/style.css">
+
+</head>
+<body>
+
+
+<div class="materialContainer">
+    <div class="box">
+        <div class="title">登录</div>
+        <div class="input">
+            <label for="name">用户名</label>
+            <input type="text" name="name" id="name">
+            <span class="spin"></span>
+        </div>
+        <div class="input">
+            <label for="pass">密码</label>
+            <input type="password" name="pass" id="pass">
+            <span class="spin"></span>
+        </div>
+        <div class="button login">
+            <button id="userLogin">
+                <span>登录</span>
+                <i class="fa fa-check"></i>
+            </button>
+        </div>
+        <a href="javascript:" class="pass-forgot">忘记密码？</a>
+    </div>
+
+    <div class="overbox">
+        <div class="material-button alt-2">
+            <span class="shape"></span>
+        </div>
+        <div class="title">注册</div>
+        <div class="input">
+            <label for="regname">用户名</label>
+            <input type="text" name="regname" id="regname">
+            <span class="spin"></span>
+        </div>
+        <div class="input">
+            <label for="regpass">密码</label>
+            <input type="password" name="regpass" id="regpass">
+            <span class="spin"></span>
+        </div>
+        <div class="input">
+            <label for="reregpass">确认密码</label>
+            <input type="password" name="reregpass" id="reregpass">
+            <span class="spin"></span>
+        </div>
+        <div class="button">
+            <button>
+                <span>注册</span>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="login/js/index.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['jquery', 'layer'], function () {
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        $("#userLogin").click(function () {
+            var userName = document.getElementById("name").value;
+            var password = document.getElementById("pass").value;
+            console.log("userName：" + userName + ":" + "password:" + password)
+            var data = {}
+            data["phoneNumber"] = userName,
+                data["password"] = password,
+                $.ajax({
+                    url: 'http://localhost:9000/system_manager/user/login',
+                    method: 'POST',
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify(data),
+                    async: true,
+                    success: function (data) {
+                        console.log(data)
+                        if (data.code == 0) {
+                            if (!window.localStorage) {
+                                alert("浏览器不支持localstorage");
+                                return false;
+                            } else {
+                                //主逻辑业务
+                                localStorage.setItem("role", data.data.role);
+                                localStorage.setItem("id", data.data.id)
+                                localStorage.setItem("Authorization", "Bearer " + data.data.token);
+                            }
+                            layer.msg("登录成功")
+							console.log(localStorage.getItem("id"))
+                            setTimeout(function () {
+                                location.href = "./index.html"
+                            }, 1000)
+                        }
+                        if (data.code == 20002) {
+                            layer.msg(data.msg + "，用户名或密码错误,请重新登录！");
+
+
+                        }
+                        if (data.code == 20001){
+                            layer.msg(data.msg);
+                            setTimeout(function () {
+                                location.href = "/"
+                            }, 5000);
+                        }
+                    },
+
+                    error: function (data) {
+
+                    }
+
+                });
+        })
+    });
+
+</script>
+</body>
+</html>

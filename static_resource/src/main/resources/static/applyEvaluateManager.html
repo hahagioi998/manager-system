@@ -83,6 +83,14 @@
         var table = layui.table;
         var layer = layui.layer;
         var dtree = layui.dtree;
+
+
+        //全局设置头部信息
+        $.ajaxSetup({
+            headers: {
+                "Authorization": localStorage.getItem("Authorization")
+            }
+        });
         var url = location.search;
         var id = new Object();
         if (url.indexOf("?")!=-1){

@@ -51,6 +51,13 @@
 <script type="text/javascript">
     layui.use('jquery', function () {
         var $ = layui.jquery;
+
+        //全局设置头部信息
+        $.ajaxSetup({
+            headers: {
+                "Authorization": localStorage.getItem("Authorization")
+            }
+        });
         //获取链接参数
         var url = location.search;
         var params = new Object();

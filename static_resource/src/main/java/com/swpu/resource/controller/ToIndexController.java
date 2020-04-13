@@ -8,6 +8,6 @@ public class ToIndexController {
 
     @RequestMapping("/")
     public String toIndex(){
-        return "index";
+        return "login";
     }
 }

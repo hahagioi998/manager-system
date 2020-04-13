@@ -16,11 +16,22 @@ public interface RoleMapper {
      */
     @Select("select id FROM role WHERE id in(SELECT r_id from user_role  where u_id = #{id})")
     List<String> queryUserRoleIdsByUid(@Param("id") String id);
+
+    /**
+     * 通过用户id查询权限集合
+     * @param id
+     * @return
+     */
+    @Select("SELECT permission_name FROM permission where id in (\n" +
+            "select p_id FROM role_permission where r_id in(\n" +
+            "SELECT r_id from user_role where u_id = #{id}\n" +
+            "\t)\n" +
+            ")")
+    List<String> queryPermissionByUId(String id);
     /**
      * 根据用户ID删除用户角色中间表的数据
      * @param uId
      */
-
     @Delete("delete from user_role where u_id = #{uId}")
     void deleteRoleUserByUid(@Param("uId") String uId);
 
@@ -103,4 +114,6 @@ public interface RoleMapper {
      */
     @Delete("delete from role where id = #{id}")
     void deleteRole(String id);
+
+
 }
